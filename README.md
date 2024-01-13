@@ -1,8 +1,6 @@
-# Season-2023
+# Empty Robot
 
-[Charged UP!](https://www.firstinspires.org/robotics/frc/game-and-season)
-
-[![CI](https://github.com/team4186/season-2023/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/team4186/season-2023/actions/workflows/main.yml)
+Sample code used to create new repositories
 
 ---
 
