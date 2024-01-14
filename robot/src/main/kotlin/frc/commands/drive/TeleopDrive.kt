@@ -1,6 +1,6 @@
 package frc.commands.drive
 
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import frc.subsystems.DriveTrainSubsystem
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -13,7 +13,7 @@ class TeleopDrive(
     private val shouldAttenuate: () -> Boolean = { true },
     private val forward: () -> Double = { -1.0 },
     private val drive: DriveTrainSubsystem
-) : CommandBase() {
+) : Command() {
     init {
         addRequirements(drive)
     }

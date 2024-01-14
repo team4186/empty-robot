@@ -1,25 +1,22 @@
 package frc.subsystems
 
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
+import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
 import edu.wpi.first.wpilibj.MotorSafety
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
 class DriveTrainSubsystem(
-    val leftMotor: WPI_TalonSRX = driveTalonVictorMotors(
-        WPI_TalonSRX(14),
+    val leftMotor: CANSparkMax = driveSparkMaxMotors(
+        CANSparkMax(14, CANSparkLowLevel.MotorType.kBrushless),
+        CANSparkMax(13, CANSparkLowLevel.MotorType.kBrushless),
         inverted = true,
-        WPI_VictorSPX(13),
-        WPI_VictorSPX(15),
     ),
-    val rightMotor: WPI_TalonSRX = driveTalonVictorMotors(
-        WPI_TalonSRX(2),
+    val rightMotor: CANSparkMax = driveSparkMaxMotors(
+        CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless),
+        CANSparkMax(1, CANSparkLowLevel.MotorType.kBrushless),
         inverted = false,
-        WPI_VictorSPX(1),
-        WPI_VictorSPX(3),
     ),
 ) : SubsystemBase() {
     private val drive: DifferentialDrive = DifferentialDrive(leftMotor, rightMotor)
@@ -37,14 +34,6 @@ class DriveTrainSubsystem(
     }
 
     override fun periodic() {
-        if (leftMotor.statorCurrent > 60.0) {
-            leftMotor.stopMotor()
-            motorSafety.feed()
-        }
-        if (rightMotor.statorCurrent > 60.0) {
-            rightMotor.stopMotor()
-            motorSafety.feed()
-        }
     }
 
     fun initialize() {
@@ -58,13 +47,13 @@ class DriveTrainSubsystem(
     }
 
     fun setToCoast() {
-        leftMotor.setNeutralMode(NeutralMode.Coast)
-        rightMotor.setNeutralMode(NeutralMode.Coast)
+        leftMotor.idleMode = CANSparkBase.IdleMode.kCoast
+        rightMotor.idleMode = CANSparkBase.IdleMode.kCoast
     }
 
     fun setToBreak() {
-        leftMotor.setNeutralMode(NeutralMode.Brake)
-        rightMotor.setNeutralMode(NeutralMode.Brake)
+        leftMotor.idleMode = CANSparkBase.IdleMode.kBrake
+        rightMotor.idleMode = CANSparkBase.IdleMode.kBrake
     }
 
     fun arcade(forward: Double, turn: Double, squareInputs: Boolean) {
@@ -91,31 +80,18 @@ class DriveTrainSubsystem(
     }
 }
 
-fun driveTalonVictorMotors(
-    lead: WPI_TalonSRX,
-    inverted: Boolean,
-    vararg followers: WPI_VictorSPX,
-): WPI_TalonSRX {
-    lead.inverted = inverted
-    followers.forEach {
-        it.follow(lead)
-        it.inverted = inverted
-    }
-    return lead
-}
-
 fun driveSparkMaxMotors(
     lead: CANSparkMax,
     follower0: CANSparkMax,
-    invert: Boolean
+    inverted: Boolean
 ): CANSparkMax {
     follower0.follow(lead)
 
-    follower0.inverted = invert
-    lead.inverted = invert
+    follower0.inverted = inverted
+    lead.inverted = inverted
 
-    lead.idleMode = CANSparkMax.IdleMode.kCoast
-    follower0.idleMode = CANSparkMax.IdleMode.kCoast
+    lead.idleMode = CANSparkBase.IdleMode.kCoast
+    follower0.idleMode = CANSparkBase.IdleMode.kCoast
 
     // Voltage Saturation
     // See https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#voltage-compensation

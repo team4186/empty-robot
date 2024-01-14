@@ -1,6 +1,6 @@
 package frc.commands.drive
 
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import frc.subsystems.DriveTrainSubsystem
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -15,7 +15,7 @@ class CheesyDrive(
     private val drive: DriveTrainSubsystem,
     private val sensitivityHigh: Double,
     private val sensitivityLow: Double
-) : CommandBase() {
+) : Command() {
     private var oldWheel = 0.0
     private var quickStopAccumulator = 0.0
     override fun execute() {

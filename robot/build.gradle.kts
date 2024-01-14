@@ -1,53 +1,42 @@
 import edu.wpi.first.deployutils.deploy.artifact.FileTreeArtifact
 import edu.wpi.first.gradlerio.deploy.roborio.FRCJavaArtifact
 import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
-import edu.wpi.first.gradlerio.wpi.dependencies.tools.ToolInstallTask
 import edu.wpi.first.toolchain.NativePlatforms
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    java
     id("edu.wpi.first.GradleRIO")
 }
 
 group = "org.aztechs"
-version = "2023"
+version = "2024"
 
-JavaVersion.VERSION_11.let {javaVersion ->
-    java {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion.majorVersion
-        }
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
     targets {
-        register<RoboRIO>(name = "roborio") {
+        val roborio by register<RoboRIO>(name = "roborio") {
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
             // or from command line. If not found an exception will be thrown.
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
             // want to store a team number in this file.
-            team = project.frc.teamNumber
+            team = 4186
 //            debug = project.frc.getDebugOrDefault(false)
             directory = "/home/lvuser/deploy"
-            this.artifacts {
-                register<FRCJavaArtifact>("frcJava") {
-                    dependsOn(tasks.jar.get())
-                    setJarTask(tasks.jar.get())
-                }
+        }
 
-                register<FileTreeArtifact>("frcStaticFileDeploy") {
-                    files(project.fileTree("src/main/deploy"))
-                }
+        roborio.artifacts {
+            register<FRCJavaArtifact>("frcJava") {
+                dependsOn(tasks.jar.get())
+                setJarTask(tasks.jar.get())
+            }
+
+            register<FileTreeArtifact>("frcStaticFileDeploy") {
+                files(project.fileTree("src/main/deploy"))
             }
         }
     }
@@ -74,6 +63,7 @@ dependencies {
         deps.wpilib().forEach { implementation(it.get()) }
         vendor.java().forEach { implementation(it.get()) }
 
+        // `roborio` prefix comes from the `deploy.target` section
         deps.wpilibJniDebug(NativePlatforms.roborio).forEach { "roborioDebug"(it.get()) }
         vendor.jniDebug(NativePlatforms.roborio).forEach { "roborioDebug"(it.get()) }
 
@@ -89,14 +79,10 @@ dependencies {
 
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
-    implementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-
-    testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
-    testImplementation("io.kotest:kotest-assertions-core:5.5.4")
-    testImplementation("io.mockk:mockk:1.13.2")
+    testImplementation(platform("io.kotest:kotest-bom:5.8.0"))
+    testImplementation("io.kotest:kotest-runner-junit5")
+    testImplementation("io.kotest:kotest-assertions-core")
+    testImplementation("io.mockk:mockk:1.13.9")
 }
 
 tasks {
@@ -117,23 +103,12 @@ tasks {
             configurations
                 .runtimeClasspath
                 .get()
-                .map { if(it.isDirectory) it else zipTree(it) }
+                .map { if (it.isDirectory) it else zipTree(it) }
         )
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
     test {
         useJUnitPlatform()
-    }
-
-    ToolInstallTask.setToolsFolder(project.rootProject.file(".wpilib/tools/"))
-    create<JavaExec>("launchShuffleboard") {
-        group = "tools"
-        classpath = files(project.rootProject.file(".wpilib/tools/ShuffleBoard.jar"))
-    }
-
-    create<JavaExec>("launchSmartdash") {
-        group = "tools"
-        classpath = files(project.rootProject.file(".wpilib/tools/ShuffleBoard.jar"))
     }
 }
