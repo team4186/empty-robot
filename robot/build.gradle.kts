@@ -78,6 +78,7 @@ dependencies {
     }
 
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
+    wpi.sim.enableDebug().forEach { simulationDebug(it) }
 
     testImplementation(platform("io.kotest:kotest-bom:5.8.0"))
     testImplementation("io.kotest:kotest-runner-junit5")

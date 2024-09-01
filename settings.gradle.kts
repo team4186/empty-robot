@@ -1,8 +1,9 @@
+rootProject.name = "empty-robot"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     plugins {
-        id("edu.wpi.first.GradleRIO") version "2024.1.1"
-        kotlin("jvm") version "1.9.20"
+        id("edu.wpi.first.GradleRIO") version "2024.3.2"
+        kotlin("jvm") version "2.0.20"
     }
 
     repositories {

@@ -321,9 +321,6 @@ gradle-app.setting
 # DO NOT REMOVE .classpath and .project
 .classpath
 .project
-.settings/
-bin/
-
 
 # Simulation GUI and other tools window save file
 *-window.json
@@ -332,6 +329,6 @@ bin/
 .wpilib/tools
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-westcoast/simgui-ds.json
-westcoast/simgui.json
+robot/networktables.json
+robot/simgui.json
+robot/simgui-ds.json
