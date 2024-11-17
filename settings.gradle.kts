@@ -13,6 +13,12 @@ pluginManagement {
             name = "wpilib"
             url = uri("~/wpilib/2024/maven")
         }
+        if("windows" in System.getProperty("os.name").lowercase()) {
+            maven {
+                name = "wpilib-alt"
+                url = uri("/Users/Public/wpilib/2024/maven")
+            }
+        }
     }
 }
 
