@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.aztechs"
-version = "2024"
+version = "2025"
 
 kotlin {
     jvmToolchain(17)
