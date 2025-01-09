@@ -1,5 +1,7 @@
 package frc.robot
 
+import edu.wpi.first.hal.FRCNetComm
+import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
@@ -21,6 +23,8 @@ class Robot : TimedRobot() {
     private val autonomousChooser = SendableChooser<Command>()
 
     override fun robotInit() {
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Kotlin)
+
         with(autonomousChooser) {
             setDefaultOption("Nothing", null)
             SmartDashboard.putData("Autonomous Mode", this)
